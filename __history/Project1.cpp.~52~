@@ -1,0 +1,77 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+#include <tchar.h>
+//---------------------------------------------------------------------------
+USEFORM("UMedicinesFF.cpp", FMedicinesFF);
+USEFORM("UCiphersMKBFF.cpp", FCiphersMKBFF);
+USEFORM("UMedicinesGroups.cpp", FMedicinesGroups);
+USEFORM("UPositionsFF.cpp", FPositionsFF);
+USEFORM("UMedicines.cpp", FMedicines);
+USEFORM("UCiphersMKB.cpp", FCiphersMKB);
+USEFORM("UPatientsView.cpp", FPatientsView);
+USEFORM("UServicesDirectory.cpp", FServicesDirectory);
+USEFORM("UServiceFF.cpp", FServicesFF);
+USEFORM("UMedicinesGroupsFF.cpp", FMedicinesGroupsFF);
+USEFORM("UCountryFF.cpp", FCountryFF);
+USEFORM("UPatients.cpp", FPatients);
+USEFORM("UPositions.cpp", FPositions);
+USEFORM("Prompt_20.cpp", Form20);
+USEFORM("DataModule.cpp", DataModule2); /* TDataModule: File Type */
+USEFORM("Head_21.cpp", Form21);
+USEFORM("UMain.cpp", FMain);
+USEFORM("URegions.cpp", FRegions);
+USEFORM("URegionFF.cpp", FRegionFF);
+USEFORM("UCardEntry.cpp", FCardEntry);
+USEFORM("UCountry.cpp", FCountry);
+USEFORM("UCoupons.cpp", FCoupons);
+//---------------------------------------------------------------------------
+int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
+{
+	try
+	{
+		Application->Initialize();
+		Application->MainFormOnTaskBar = true;
+        Application->CreateForm(__classid(TForm20), &Form20);
+		Application->CreateForm(__classid(TFMain), &FMain);
+		Application->CreateForm(__classid(TDataModule2), &DataModule2);
+		Application->CreateForm(__classid(TFPatients), &FPatients);
+		Application->CreateForm(__classid(TFCoupons), &FCoupons);
+		Application->CreateForm(__classid(TFPatientsView), &FPatientsView);
+		Application->CreateForm(__classid(TFCardEntry), &FCardEntry);
+		Application->CreateForm(__classid(TFServicesDirectory), &FServicesDirectory);
+		Application->CreateForm(__classid(TFServicesFF), &FServicesFF);
+		Application->CreateForm(__classid(TFCountry), &FCountry);
+		Application->CreateForm(__classid(TFCountryFF), &FCountryFF);
+		Application->CreateForm(__classid(TFRegions), &FRegions);
+		Application->CreateForm(__classid(TFRegionFF), &FRegionFF);
+		Application->CreateForm(__classid(TFPositions), &FPositions);
+		Application->CreateForm(__classid(TFPositionsFF), &FPositionsFF);
+		Application->CreateForm(__classid(TFMedicines), &FMedicines);
+		Application->CreateForm(__classid(TFCiphersMKB), &FCiphersMKB);
+		Application->CreateForm(__classid(TFMedicinesFF), &FMedicinesFF);
+		Application->CreateForm(__classid(TFCiphersMKBFF), &FCiphersMKBFF);
+		Application->CreateForm(__classid(TFMedicinesGroups), &FMedicinesGroups);
+		Application->CreateForm(__classid(TFMedicinesGroupsFF), &FMedicinesGroupsFF);
+		Application->CreateForm(__classid(TForm21), &Form21);
+		Application->Run();
+	}
+	catch (Exception &exception)
+	{
+		Application->ShowException(&exception);
+	}
+	catch (...)
+	{
+		try
+		{
+			throw Exception("");
+		}
+		catch (Exception &exception)
+		{
+			Application->ShowException(&exception);
+		}
+	}
+	return 0;
+}
+//---------------------------------------------------------------------------

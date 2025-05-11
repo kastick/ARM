@@ -1,0 +1,80 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UPositions.h"
+#include "Unit13.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFPositions *FPositions;
+//---------------------------------------------------------------------------
+__fastcall TFPositions::TFPositions(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TFPositions::Button1Click(TObject *Sender)
+{
+    Form13->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFPositions::Button2Click(TObject *Sender)
+{
+    DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery10->Append();
+	Form13->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFPositions::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery10->Delete();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFPositions::Edit1Change(TObject *Sender)
+{
+    String filterText = Edit1->Text;
+
+	DataModule2->FDQuery10->Close();
+
+	if (!filterText.IsEmpty() && filterText != "Поиск...")
+	{
+		DataModule2->FDQuery10->ParamByName("SpecialtiesFilter")->AsString = "%" + filterText + "%";
+    }
+	else
+	{
+		DataModule2->FDQuery10->ParamByName("SpecialtiesFilter")->AsString = "%";
+    }
+
+	DataModule2->FDQuery10->Open();
+
+    // Обновляем StatusBar с количеством записей
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery10->RecordCount);
+}
+//---------------------------------------------------------------------------
+void __fastcall TFPositions::Edit1Enter(TObject *Sender)
+{
+    // Если текст "Поиск...", очищаем поле
+	if (Edit1->Text == "Поиск...")
+    {
+		Edit1->Text = "";
+    }
+}
+//---------------------------------------------------------------------------
+void __fastcall TFPositions::Edit1Exit(TObject *Sender)
+{
+     // Если поле пустое, устанавливаем текст "Поиск..."
+	if (Edit1->Text.IsEmpty())
+    {
+		Edit1->Text = "Поиск...";
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TFPositions::FormShow(TObject *Sender)
+{
+	DataModule2->FDQuery10->Open();
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery10->RecordCount);
+}
+//---------------------------------------------------------------------------

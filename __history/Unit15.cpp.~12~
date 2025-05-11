@@ -1,0 +1,75 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit15.h"
+#include "Unit17.h"
+#include "Unit5.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm15 *Form15;
+//---------------------------------------------------------------------------
+__fastcall TForm15::TForm15(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm15::Button1Click(TObject *Sender)
+{
+	int SelectedAilID = DataModule2->FDQuery14->FieldByName("AilsID")->AsInteger;
+
+	Form5->SetAilID(SelectedAilID);
+
+	Close();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm15::Button5Click(TObject *Sender)
+{
+	 Form17->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm15::Button2Click(TObject *Sender)
+{
+    DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery14->Append();
+	Form17->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm15::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery14->Delete();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm15::Edit1Change(TObject *Sender)
+{
+    String filterText = Edit1->Text;
+
+	DataModule2->FDQuery12->Close();
+
+	if (!filterText.IsEmpty() && filterText != "Поиск...")
+	{
+		DataModule2->FDQuery12->ParamByName("MedicinesFilter")->AsString = "%" + filterText + "%";
+    }
+    else
+	{
+		DataModule2->FDQuery12->ParamByName("MedicinesFilter")->AsString = "%";
+    }
+
+	DataModule2->FDQuery12->Open();
+
+    // Обновляем StatusBar с количеством записей
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery12->RecordCount);
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm15::Edit1Enter(TObject *Sender)
+{
+    // Если текст "Поиск...", очищаем поле
+	if (Edit1->Text == "Поиск...")
+    {
+		Edit1->Text = "";
+    }
+}
+//---------------------------------------------------------------------------

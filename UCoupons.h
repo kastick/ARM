@@ -1,0 +1,60 @@
+//---------------------------------------------------------------------------
+
+#ifndef UCouponsH
+#define UCouponsH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.ComCtrls.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.WinXCtrls.hpp>
+#include <System.Win.TaskbarCore.hpp>
+#include <Vcl.Taskbar.hpp>
+#include <Vcl.DBCtrls.hpp>
+#include <Data.DB.hpp>
+#include <Vcl.DBGrids.hpp>
+#include <Vcl.Grids.hpp>
+#include <Vcl.Samples.Calendar.hpp>
+#include <Vcl.WinXCalendars.hpp>
+#include <Vcl.WinXPickers.hpp>
+#include <Vcl.ToolWin.hpp>
+#include <Vcl.Buttons.hpp>
+//---------------------------------------------------------------------------
+class TFCoupons : public TForm
+{
+__published:	// IDE-managed Components
+	TPanel *Panel1;
+	TPanel *Panel2;
+	TTreeView *TreeView1;
+	TPanel *Panel4;
+	TDBGrid *DBGrid1;
+	TMemo *Memo1;
+	TMonthCalendar *MonthCalendar1;
+	TButton *Button1;
+	TPanel *Panel5;
+	TButton *Button3;
+	TPanel *Panel6;
+	TCheckBox *CheckBox1;
+	TButton *Button2;
+	TStatusBar *StatusBar1;
+	void __fastcall FormCreate(TObject *Sender);
+	void __fastcall TreeView1Click(TObject *Sender);
+	void __fastcall MonthCalendar1Click(TObject *Sender);
+	void __fastcall ApplyFilters();
+	void __fastcall Button1Click(TObject *Sender);
+	void __fastcall CheckBox1Click(TObject *Sender);
+	void __fastcall Button3Click(TObject *Sender);
+	void __fastcall Button2Click(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
+private:	// User declarations
+	int SelectedDoctorID;
+    int selectedRecID;
+public:		// User declarations
+	__fastcall TFCoupons(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TFCoupons *FCoupons;
+//---------------------------------------------------------------------------
+#endif

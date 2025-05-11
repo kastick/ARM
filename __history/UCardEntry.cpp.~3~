@@ -1,0 +1,506 @@
+//---------------------------------------------------------------------------
+//#define DEBUG
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UCardEntry.h"
+#include "UPatientsView.h"
+#include "UCoupons.h"
+#include "UPatients.h"
+#include "UServiceDirectory.h"
+#include "Unit14.h"
+#include "Unit15.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFCardEntry *FCardEntry;
+//---------------------------------------------------------------------------
+__fastcall TFCardEntry::TFCardEntry(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::SetDoctorID(int SelectedDoctorID, TDateTime selectedDate)
+{
+	// Сохраняем SelectedDoctorID
+	this->SelectedDoctorID = SelectedDoctorID;
+
+	this->selectedDate = selectedDate;
+
+   	// 1. Создаем новую запись в inf_Records
+	DataModule2->FDQuery6->SQL->Clear();
+	DataModule2->FDQuery6->SQL->Add("INSERT INTO inf_Records (employee) VALUES (:DoctorID)");
+	DataModule2->FDQuery6->ParamByName("DoctorID")->AsInteger = SelectedDoctorID;
+	DataModule2->FDQuery6->ExecSQL();
+
+	// 2. Получаем новый IRecID
+    DataModule2->FDQuery6->SQL->Clear();
+	DataModule2->FDQuery6->SQL->Add("SELECT MAX(IRecID) AS NewIRecID FROM inf_Records");
+	DataModule2->FDQuery6->Open();
+
+	newIRecID = DataModule2->FDQuery6->FieldByName("NewIRecID")->AsInteger;
+
+    // 3. Создаем новую запись в Records
+	DataModule2->FDQuery6->SQL->Clear();
+	DataModule2->FDQuery6->SQL->Add("INSERT INTO Records (Description, `Date`) VALUES (:Description, :Date)");
+	DataModule2->FDQuery6->ParamByName("Description")->AsInteger = newIRecID; // Используем новый IRecID
+	DataModule2->FDQuery6->ParamByName("Date")->AsDateTime  = selectedDate;
+	DataModule2->FDQuery6->ExecSQL();
+
+
+    DataModule2->FDQuery1->Close();
+    DataModule2->FDQuery1->Open();
+	DataModule2->FDQuery1->Last();
+
+	recID = DataModule2->FDQuery1->FieldByName("RecID")->AsInteger;
+
+	PopulateTimeComboBox();
+	UpdateQuery();
+	UpdateQueryMed();
+    UpdateQueryAil();
+}
+
+void __fastcall TFCardEntry::DocID(int selectedDocID)
+{
+	this->selectedDocID = selectedDocID;
+
+	PopulateTimeComboBox();
+}
+
+void __fastcall TFCardEntry::SetRecID(int recID)
+{
+	// Сохраняем RecID
+	this->recID = recID;
+
+	#ifdef DEBUG
+        FCardEntry->Height = 712;
+		Memo1->Visible = true;
+		Memo1->Lines->Add("Rec: " + IntToStr(this->recID));
+    #endif
+
+	UpdateQuery();
+	UpdateQueryMed();
+    UpdateQueryAil();
+}
+
+void __fastcall TFCardEntry::SetPatientID(int SelectedPatientID)
+{
+// Сохраняем SelectedPatientID
+	this->SelectedPatientID = SelectedPatientID;
+
+    // 1. Обновляем запись в inf_Records
+	DataModule2->FDQuery6->SQL->Clear();
+    DataModule2->FDQuery6->SQL->Add("UPDATE inf_Records SET patient = :PatientID WHERE IRecID = (SELECT MAX(IRecID) FROM inf_Records)");
+	DataModule2->FDQuery6->ParamByName("PatientID")->AsInteger = SelectedPatientID;
+    DataModule2->FDQuery6->ExecSQL();
+
+	// 5. Обновляем форму
+    DataModule2->FDQuery1->Close();
+	DataModule2->FDQuery1->Open();
+    DataModule2->FDQuery1->Last();
+}
+
+void __fastcall TFCardEntry::UpdateQuery()
+{
+	// Закрываем запрос, если он открыт
+	if (DataModule2->FDQuery5->Active)
+	{
+		DataModule2->FDQuery5->Close();
+	}
+
+	DataModule2->FDQuery5->ParamByName("RecID")->AsInteger = this->recID;
+
+	DataModule2->FDQuery5->Open();
+
+	TotalCost();
+}
+
+void __fastcall TFCardEntry::TotalCost()
+{
+	Currency totalCost = 0.0;
+
+	if (!DataModule2->FDQuery5->Active || DataModule2->FDQuery5->IsEmpty()) {
+		return;
+    }
+
+    while (!DataModule2->FDQuery5->Eof) {
+        double price = DataModule2->FDQuery5->FieldByName("Price")->AsFloat;
+        int count = DataModule2->FDQuery5->FieldByName("Count")->AsInteger;
+
+        totalCost += price * count;
+
+        DataModule2->FDQuery5->Next();
+    }
+
+    if (DataModule2->FDQuery5->RecordCount > 0) {
+		DataModule2->FDQuery5->Edit();
+		DataModule2->FDQuery5->FieldByName("Sum")->AsCurrency = totalCost;
+        DataModule2->FDQuery5->Post();
+    } else {
+        ShowMessage("Нет записей для обновления суммы.");
+	}
+}
+
+void __fastcall TFCardEntry::Button6Click(TObject *Sender)
+{
+    if (!DataModule2->FDTransaction1->Active)
+    {
+		DataModule2->FDTransaction1->StartTransaction();
+    }
+
+	DataModule2->FDQuery1->Edit();
+	DataModule2->FDQuery1->Post();
+
+	DataModule2->FDTransaction1->Commit();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::Button5Click(TObject *Sender)
+{
+    this->Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::Button7Click(TObject *Sender)
+{
+	FPatients->ShowModal(); // Показываем форму заполнения
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::Button3Click(TObject *Sender)
+{
+	Form6->Button1->Visible = true;
+	Form6->Button1->Left = 0;
+	Form6->Button5->Left = 106;
+	Form6->Button2->Left = 211;
+    Form6->Button3->Left = 316;
+	Form6->Caption = "Выберите услугу";
+	Form6->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::SetServiceID(int SelectedServiceID)
+{
+	this->SelectedServiceID = SelectedServiceID;
+
+	#ifdef DEBUG
+		Memo1->Lines->Add("SrvcID: " + IntToStr(this->SelectedServiceID));
+    #endif
+
+	DataModule2->FDQuery6->SQL->Clear();
+	DataModule2->FDQuery6->SQL->Add("INSERT INTO Service (Service, Record, `Count`) VALUES (:Service, :Record, :Count)");
+	DataModule2->FDQuery6->ParamByName("Service")->AsInteger = SelectedServiceID;
+	DataModule2->FDQuery6->ParamByName("Record")->AsInteger  = recID;
+	DataModule2->FDQuery6->ParamByName("Count")->AsInteger  = 1;
+	DataModule2->FDQuery6->ExecSQL();
+
+	DataModule2->FDQuery5->Close();
+	DataModule2->FDQuery5->Open();
+	DataModule2->FDQuery5->Last();
+
+	UpdateQuery();
+}
+
+void __fastcall TFCardEntry::SetMedID(int SelectedMedID)
+{
+	this->SelectedMedID = SelectedMedID;
+
+	#ifdef DEBUG
+		Memo1->Lines->Add("MedID: " + IntToStr(this->SelectedMedID));
+	#endif
+
+	DataModule2->FDQuery6->SQL->Clear();
+	DataModule2->FDQuery6->SQL->Add("INSERT INTO Medicine (Medicine, Record, `Count`) VALUES (:Medicine, :Record, :Count)");
+	DataModule2->FDQuery6->ParamByName("Medicine")->AsInteger = SelectedMedID;
+	DataModule2->FDQuery6->ParamByName("Record")->AsInteger  = recID;
+	DataModule2->FDQuery6->ParamByName("Count")->AsInteger  = 1;
+	DataModule2->FDQuery6->ExecSQL();
+
+	DataModule2->FDQuery13->Close();
+	DataModule2->FDQuery13->Open();
+	DataModule2->FDQuery13->Last();
+
+	UpdateQueryMed();
+}
+
+void __fastcall TFCardEntry::UpdateQueryMed()
+{
+	// Закрываем запрос, если он открыт
+	if (DataModule2->FDQuery13->Active)
+	{
+		DataModule2->FDQuery13->Close();
+	}
+
+	DataModule2->FDQuery13->ParamByName("RecID")->AsInteger = this->recID;
+
+	DataModule2->FDQuery13->Open();
+
+	TotalCostMed();
+}
+
+void __fastcall TFCardEntry::TotalCostMed()
+{
+	Currency totalCost = 0.0;
+
+	if (!DataModule2->FDQuery13->Active || DataModule2->FDQuery13->IsEmpty()) {
+        return;
+    }
+
+	while (!DataModule2->FDQuery13->Eof) {
+		double price = DataModule2->FDQuery13->FieldByName("Цена")->AsFloat;
+		int count = DataModule2->FDQuery13->FieldByName("Count")->AsInteger;
+
+        totalCost += price * count;
+
+		DataModule2->FDQuery13->Next();
+    }
+
+	if (DataModule2->FDQuery13->RecordCount > 0) {
+		DataModule2->FDQuery13->Edit(); // Переходим в режим редактирования
+		DataModule2->FDQuery13->FieldByName("Sum")->AsCurrency = totalCost; // Устанавливаем сумму
+        DataModule2->FDQuery13->Post(); // Сохраняем изменения
+    } else {
+        ShowMessage("Нет записей для обновления суммы.");
+	}
+}
+
+
+void __fastcall TFCardEntry::SetAilID(int SelectedAilID)
+{
+	this->SelectedAilID = SelectedAilID;
+
+	#ifdef DEBUG
+		Memo1->Lines->Add("AliID: " + IntToStr(this->SelectedAilID));
+	#endif
+
+	DataModule2->FDQuery6->SQL->Clear();
+	DataModule2->FDQuery6->SQL->Add("INSERT INTO [Аilment] ([Ailment], [Record]) VALUES (:Ailment, :Record)");
+	DataModule2->FDQuery6->ParamByName("Ailment")->AsInteger = SelectedAilID;
+	DataModule2->FDQuery6->ParamByName("Record")->AsInteger  = recID;
+	DataModule2->FDQuery6->ExecSQL();
+
+	DataModule2->FDQuery15->Close();
+	DataModule2->FDQuery15->Open();
+	DataModule2->FDQuery15->Last();
+
+	UpdateQueryAil();
+}
+
+void __fastcall TFCardEntry::UpdateQueryAil()
+{
+	// Закрываем запрос, если он открыт
+	if (DataModule2->FDQuery15->Active)
+	{
+		DataModule2->FDQuery15->Close();
+	}
+
+	DataModule2->FDQuery15->ParamByName("RecID")->AsInteger = this->recID;
+
+	DataModule2->FDQuery15->Open();
+}
+
+void __fastcall TFCardEntry::PopulateTimeComboBox()
+{
+    // Очищаем существующие элементы в ComboBox1
+	ComboBox1->Items->Clear();
+
+    // Получаем дату и время из Record
+	TDateTime selectedDate = DataModule2->FDQuery1->FieldByName("Дата")->AsDateTime;
+	TDateTime startTime = selectedDate + 8.0 / 24.0; // 8:00:00
+	TDateTime endTime = selectedDate + 14.0 / 24.0;  // 14:00:00
+	TDateTime currentTime = startTime;
+
+    // Запрос для получения существующих бронирований на выбранную дату
+	TStringList *bookedTimes = new TStringList();
+    String defaultTime;
+    try
+    {
+		// Предполагаем, что FDQuery настроен для получения забронированных времен
+		DataModule2->FDQuery6->SQL->Text =
+			"SELECT Time FROM Records WHERE Date = :Date"
+			" AND (Select employee from inf_Records where IRecID = Description) = :DocID";
+
+		DataModule2->FDQuery6->ParamByName("Date")->AsDateTime = selectedDate;
+		DataModule2->FDQuery6->ParamByName("DocID")->AsInteger = this->SelectedDoctorID;
+		DataModule2->FDQuery6->Open();
+
+		#ifdef DEBUG
+			Memo1->Lines->Add("ID: " + IntToStr(this->SelectedDoctorID));
+		#endif
+
+		while (!DataModule2->FDQuery6->Eof)
+		{
+			bookedTimes->Add(DataModule2->FDQuery6->FieldByName("Time")->AsString);
+			DataModule2->FDQuery6->Next();
+        }
+    }
+    __finally
+    {
+		DataModule2->FDQuery6->Close();
+    }
+
+    // Заполняем ComboBox1 доступными временами
+    while (currentTime < endTime)
+    {
+        String timeString = currentTime.FormatString("hh:nn:ss");
+        if (!bookedTimes->Contains(timeString))
+        {
+            ComboBox1->Items->Add(timeString);
+        }
+        currentTime = currentTime + (30.0 / 1440.0);
+	}
+
+	delete bookedTimes;
+}
+
+void __fastcall TFCardEntry::ComboBox1Change(TObject *Sender)
+{
+    // Получаем выбранное время из ComboBox
+    String selectedTime = ComboBox1->Text;
+
+    // Обновляем поле "Время" в таблице Records
+    try
+    {
+        DataModule2->FDQuery1->Edit(); // Переходим в режим редактирования
+        DataModule2->FDQuery1->FieldByName("Время")->AsString = selectedTime; // Устанавливаем только время как строку
+        DataModule2->FDQuery1->Post(); // Сохраняем изменения
+    }
+    catch (const Exception &e)
+    {
+        ShowMessage("Ошибка при обновлении времени: " + e.Message);
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::FormShow(TObject *Sender)
+{
+	PopulateTimeComboBox();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::ViewHide()
+{
+	Label11->Visible = false;
+	ComboBox1->Visible = false;
+
+	Label12->Visible = true;
+	DBEdit7->Visible = true;
+}
+
+void __fastcall TFCardEntry::AddHide()
+{
+	Label12->Visible = false;
+	DBEdit7->Visible = false;
+
+	Label11->Visible = true;
+	ComboBox1->Visible = true;
+}
+
+
+
+void __fastcall TFCardEntry::Button2Click(TObject *Sender)
+{
+    DataModule2->FDQuery5->Delete();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::Button1Click(TObject *Sender)
+{
+	DataModule2->FDQuery11->Close();
+	DataModule2->FDQuery11->ParamByName("RecID")->AsInteger = recID;
+	DataModule2->FDQuery11->Open();
+	DataModule2->frxReport1->ShowReport();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::DBGrid2KeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
+{
+    // Проверяем, активен ли запрос
+	if (DataModule2->FDQuery13->Active)
+    {
+        // Если запись не в режиме редактирования, переходим в режим редактирования
+		if (DataModule2->FDQuery13->State == dsBrowse)
+        {
+			DataModule2->FDQuery13->Edit(); // Переход в режим редактирования
+        }
+
+        // Сохраняем изменения
+		DataModule2->FDQuery13->Post();
+    }
+
+    // Обновляем запрос
+    UpdateQueryMed();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::DBGrid1KeyUp(TObject *Sender, WORD &Key, TShiftState Shift)
+{
+    // Проверяем, активен ли запрос
+    if (DataModule2->FDQuery5->Active)
+    {
+        // Если запись не в режиме редактирования, переходим в режим редактирования
+        if (DataModule2->FDQuery5->State == dsBrowse)
+        {
+            DataModule2->FDQuery5->Edit(); // Переход в режим редактирования
+        }
+
+        // Сохраняем изменения
+        DataModule2->FDQuery5->Post();
+    }
+
+    // Обновляем запрос
+	UpdateQuery();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::Button4Click(TObject *Sender)
+{
+	Form14->Button1->Visible = true;
+	Form14->Button1->Left = 0;
+	Form14->Button5->Left = 106;
+	Form14->Button2->Left = 211;
+	Form14->Button3->Left = 316;
+	Form14->Caption = "Выберите медикамент";
+	Form14->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::Button8Click(TObject *Sender)
+{
+	DataModule2->FDQuery13->Delete();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::Button9Click(TObject *Sender)
+{
+	Form15->Button1->Visible = true;
+	Form15->Button1->Left = 0;
+	Form15->Button5->Left = 106;
+	Form15->Button2->Left = 211;
+	Form15->Button3->Left = 316;
+	Form15->Caption = "Выберите шифр";
+	Form15->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFCardEntry::Button10Click(TObject *Sender)
+{
+    DataModule2->FDQuery15->Delete();
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TFCardEntry::Button11Click(TObject *Sender)
+{
+	DataModule2->FDQuery17->Close();
+	DataModule2->FDQuery17->ParamByName("RecID")->AsInteger = recID;
+	DataModule2->FDQuery17->Open();
+	DataModule2->frxReport2->ShowReport();
+}
+//---------------------------------------------------------------------------
+
+
+
+

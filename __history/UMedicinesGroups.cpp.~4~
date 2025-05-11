@@ -1,0 +1,80 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UMedicinesGroups.h"
+#include "UMedicinesGroupsFF.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFMedicinesGroups *FMedicinesGroups;
+//---------------------------------------------------------------------------
+__fastcall TFMedicinesGroups::TFMedicinesGroups(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicinesGroups::Button1Click(TObject *Sender)
+{
+     FMedicinesGroupsFF->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicinesGroups::Button2Click(TObject *Sender)
+{
+    DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery16->Append();
+	Form19->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicinesGroups::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery16->Delete();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicinesGroups::Edit1Change(TObject *Sender)
+{
+    String filterText = Edit1->Text;
+
+	DataModule2->FDQuery16->Close();
+
+	if (!filterText.IsEmpty() && filterText != "Поиск...")
+	{
+		DataModule2->FDQuery16->ParamByName("GroupFilter")->AsString = "%" + filterText + "%";
+    }
+	else
+	{
+		DataModule2->FDQuery16->ParamByName("GroupFilter")->AsString = "%";
+    }
+
+	DataModule2->FDQuery16->Open();
+
+    // Обновляем StatusBar с количеством записей
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery16->RecordCount);
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicinesGroups::Edit1Enter(TObject *Sender)
+{
+    // Если текст "Поиск...", очищаем поле
+	if (Edit1->Text == "Поиск...")
+    {
+		Edit1->Text = "";
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicinesGroups::Edit1Exit(TObject *Sender)
+{
+    // Если поле пустое, устанавливаем текст "Поиск..."
+	if (Edit1->Text.IsEmpty())
+    {
+		Edit1->Text = "Поиск...";
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicinesGroups::FormShow(TObject *Sender)
+{
+	DataModule2->FDQuery16->Open();
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery16->RecordCount);
+}
+//---------------------------------------------------------------------------

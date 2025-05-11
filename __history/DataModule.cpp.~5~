@@ -1,0 +1,50 @@
+//---------------------------------------------------------------------------
+
+
+#pragma hdrstop
+
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma classgroup "Vcl.Controls.TControl"
+#pragma link "frCoreClasses"
+#pragma link "frxClass"
+#pragma link "frxDBSet"
+#pragma resource "*.dfm"
+TDataModule2 *DataModule2;
+//---------------------------------------------------------------------------
+__fastcall TDataModule2::TDataModule2(TComponent* Owner)
+	: TDataModule(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+
+
+
+
+
+void __fastcall TDataModule2::DataModuleCreate(TObject *Sender)
+{
+     try
+    {
+		FDConnection3->Params->Clear();
+		FDConnection3->Params->Add("DriverID=PG");
+		FDConnection3->Params->Add("Server=ep-lively-grass-a2bxyi0x.eu-central-1.aws.neon.tech");
+		FDConnection3->Params->Add("Port=5432");
+		FDConnection3->Params->Add("Database=neondb");
+		FDConnection3->Params->Add("User_Name=neondb_owner");
+		FDConnection3->Params->Add("Password=npg_q6vsub4aAHRY");
+		FDConnection3->Params->Add("UseSSL=True");
+        FDConnection3->Params->Add("SSLMode=require");
+
+        FDConnection1->Connected = true;  // устанавливаем соединение при создании DataModule
+    }
+    catch (const Exception &e)
+    {
+        ShowMessage("Ошибка подключения к базе: " + e.Message);
+        // Здесь можно добавить обработку ошибки, например, логирование или повторную попытку
+	}
+}
+//---------------------------------------------------------------------------
+

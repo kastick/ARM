@@ -1,0 +1,90 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UCiphersMKB.h"
+#include "UCiphersMKBFF.h"
+#include "UCardEntry.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFCiphersMKB *FCiphersMKB;
+//---------------------------------------------------------------------------
+__fastcall TFCiphersMKB::TFCiphersMKB(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCiphersMKB::Button1Click(TObject *Sender)
+{
+	int SelectedAilID = DataModule2->FDQuery14->FieldByName("AilsID")->AsInteger;
+
+	FCardEntry->SetAilID(SelectedAilID);
+
+	Close();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCiphersMKB::Button5Click(TObject *Sender)
+{
+	 FCiphersMKBFF->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCiphersMKB::Button2Click(TObject *Sender)
+{
+    DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery14->Append();
+	FCiphersMKBFF->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCiphersMKB::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery14->Delete();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCiphersMKB::Edit1Change(TObject *Sender)
+{
+    String filterText = Edit1->Text;
+
+	DataModule2->FDQuery14->Close();
+
+	if (!filterText.IsEmpty() && filterText != "Поиск...")
+	{
+		DataModule2->FDQuery14->ParamByName("AilmentsFilter")->AsString = "%" + filterText + "%";
+    }
+    else
+	{
+		DataModule2->FDQuery14->ParamByName("AilmentsFilter")->AsString = "%";
+    }
+
+	DataModule2->FDQuery14->Open();
+
+    // Обновляем StatusBar с количеством записей
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery14->RecordCount);
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCiphersMKB::Edit1Enter(TObject *Sender)
+{
+    // Если текст "Поиск...", очищаем поле
+	if (Edit1->Text == "Поиск...")
+    {
+		Edit1->Text = "";
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCiphersMKB::Edit1Exit(TObject *Sender)
+{
+    // Если поле пустое, устанавливаем текст "Поиск..."
+	if (Edit1->Text.IsEmpty())
+    {
+		Edit1->Text = "Поиск...";
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCiphersMKB::FormShow(TObject *Sender)
+{
+	DataModule2->FDQuery14->Open();
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery14->RecordCount);
+}
+//---------------------------------------------------------------------------

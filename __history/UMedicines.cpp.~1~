@@ -1,0 +1,90 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit14.h"
+#include "Unit16.h"
+#include "UCardEntry.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFMedicines *FMedicines;
+//---------------------------------------------------------------------------
+__fastcall TFMedicines::TFMedicines(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicines::Button1Click(TObject *Sender)
+{
+	int SelectedMedID = DataModule2->FDQuery12->FieldByName("MedsID")->AsInteger;
+
+	FCardEntry->SetMedID(SelectedMedID);
+
+	Close();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicines::Button2Click(TObject *Sender)
+{
+    DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery12->Append();
+	Form16->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicines::Button5Click(TObject *Sender)
+{
+    Form16->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicines::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery12->Delete();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicines::Edit1Change(TObject *Sender)
+{
+    String filterText = Edit1->Text;
+
+	DataModule2->FDQuery12->Close();
+
+	if (!filterText.IsEmpty() && filterText != "Поиск...")
+	{
+		DataModule2->FDQuery12->ParamByName("MedicinesFilter")->AsString = "%" + filterText + "%";
+    }
+    else
+	{
+		DataModule2->FDQuery12->ParamByName("MedicinesFilter")->AsString = "%";
+    }
+
+	DataModule2->FDQuery12->Open();
+
+    // Обновляем StatusBar с количеством записей
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery12->RecordCount);
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicines::Edit1Enter(TObject *Sender)
+{
+    // Если текст "Поиск...", очищаем поле
+	if (Edit1->Text == "Поиск...")
+    {
+		Edit1->Text = "";
+    }
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicines::Edit1Exit(TObject *Sender)
+{
+    // Если поле пустое, устанавливаем текст "Поиск..."
+	if (Edit1->Text.IsEmpty())
+    {
+		Edit1->Text = "Поиск...";
+    }
+}
+//---------------------------------------------------------------------------
+void __fastcall TFMedicines::FormShow(TObject *Sender)
+{
+	DataModule2->FDQuery12->Open();
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery12->RecordCount);
+}
+//---------------------------------------------------------------------------

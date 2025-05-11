@@ -1,0 +1,97 @@
+object FCiphersMKB: TFCiphersMKB
+  Left = 0
+  Top = 0
+  Caption = #1064#1080#1092#1088#1099' '#1052#1050#1041
+  ClientHeight = 430
+  ClientWidth = 646
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Position = poDesktopCenter
+  OnShow = FormShow
+  TextHeight = 15
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 646
+    Height = 35
+    Align = alTop
+    TabOrder = 0
+    object Button1: TButton
+      Left = 0
+      Top = 0
+      Width = 105
+      Height = 35
+      Caption = #1042#1099#1073#1088#1072#1090#1100
+      TabOrder = 0
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Left = 211
+      Top = 0
+      Width = 104
+      Height = 35
+      Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+      TabOrder = 1
+      OnClick = Button2Click
+    end
+    object Button3: TButton
+      Left = 316
+      Top = 0
+      Width = 104
+      Height = 35
+      Caption = #1059#1076#1072#1083#1080#1090#1100
+      TabOrder = 2
+      OnClick = Button3Click
+    end
+    object Edit1: TEdit
+      Left = 445
+      Top = 6
+      Width = 190
+      Height = 23
+      TabOrder = 3
+      Text = #1055#1086#1080#1089#1082'...'
+      OnChange = Edit1Change
+      OnEnter = Edit1Enter
+      OnExit = Edit1Exit
+    end
+    object Button5: TButton
+      Left = 106
+      Top = 0
+      Width = 104
+      Height = 35
+      Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100
+      TabOrder = 4
+      OnClick = Button5Click
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Top = 35
+    Width = 646
+    Height = 371
+    Align = alClient
+    DataSource = DataModule2.DataSource14
+    TabOrder = 1
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -12
+    TitleFont.Name = 'Segoe UI'
+    TitleFont.Style = []
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 406
+    Width = 646
+    Height = 24
+    Panels = <
+      item
+        Alignment = taCenter
+        Bevel = pbRaised
+        Width = 50
+      end>
+  end
+end

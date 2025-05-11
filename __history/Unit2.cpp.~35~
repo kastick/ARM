@@ -1,0 +1,137 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit2.h"
+#include "Unit1.h"
+#include "Unit3.h"
+#include "Unit6.h"
+#include "Unit8.h"
+#include "Unit10.h"
+#include "Unit12.h"
+#include "Unit14.h"
+#include "Unit15.h"
+#include "Unit18.h"
+
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma resource "*.dfm"
+TForm2 *Form2;
+//---------------------------------------------------------------------------
+__fastcall TForm2::TForm2(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+void TForm2::SetRole(const String &userRole)
+{
+	this->role = userRole;
+	role = userRole;
+	Memo1->Lines->Add("Role: " + userRole);
+
+	InitializeForm();
+}
+
+void TForm2::InitializeForm()
+{
+    TreeView1->Images = ImageList1;
+
+    // Очистить старые элементы
+    TreeView1->Items->Clear();
+	Memo1->Lines->Add("Role_2: " + role);
+    // Добавляем узлы в зависимости от роли
+	if (role == "admin") {
+        // Для администраторов все доступно
+        TTreeNode *mainNode2 = TreeView1->Items->Add(NULL, "НСИ");
+        TTreeNode *subNode3 = TreeView1->Items->AddChild(mainNode2, "Страны");
+        TTreeNode *subNode4 = TreeView1->Items->AddChild(mainNode2, "Регионы");
+        TTreeNode *subNode5 = TreeView1->Items->AddChild(mainNode2, "Группы медикаментов");
+        TTreeNode *subNode6 = TreeView1->Items->AddChild(mainNode2, "Специальности");
+        TTreeNode *subNode7 = TreeView1->Items->AddChild(mainNode2, "Справочник услуг");
+		TTreeNode *subNode8 = TreeView1->Items->AddChild(mainNode2, "Справочник медикаментов");
+        TTreeNode *subNode9 = TreeView1->Items->AddChild(mainNode2, "Справочник болезней");
+    } else {
+        // Для обычных пользователей скрываем узел "НСИ"
+        TTreeNode *mainNode1 = TreeView1->Items->Add(NULL, "Регистратура");
+        mainNode1->ImageIndex = 1;
+        mainNode1->SelectedIndex = 1;
+
+        TTreeNode *subNode1 = TreeView1->Items->AddChild(mainNode1, "Картотека пациентов");
+        subNode1->ImageIndex = 3;
+        subNode1->SelectedIndex = 3;
+
+        TTreeNode *subNode2 = TreeView1->Items->AddChild(mainNode1, "Журнал регистрации пациентов");
+    }
+}
+
+
+
+void __fastcall TForm2::TreeView1DblClick(TObject *Sender)
+{
+    TTreeNode *selectedNode = TreeView1->Selected;
+
+    if (selectedNode != NULL && selectedNode->Parent != NULL) // Проверяем, что выбран подузел
+	{
+		if (selectedNode->Text == "Картотека пациентов")
+		{
+			Form1->Show(); // Открываем первую форму
+        }
+        else if (selectedNode->Text == "Журнал регистрации пациентов")
+        {
+            Form3->Show(); // Открываем вторую форму
+		}
+		else if (selectedNode->Text == "Справочник услуг")
+		{
+			Form6->Button1->Visible = false;
+			Form6->Button5->Left = 0;
+			Form6->Button2->Left = 106;
+			Form6->Button3->Left = 211;
+			Form6->Caption = "Справочник услуг";
+			Form6->Show();
+		}
+		else if (selectedNode->Text == "Страны")
+		{
+			Form8->Show();
+		}
+		else if (selectedNode->Text == "Регионы")
+		{
+			Form10->Show();
+		}
+		else if (selectedNode->Text == "Специальности")
+		{
+			Form12->Show();
+		}
+		else if (selectedNode->Text == "Справочник медикаментов")
+		{
+			Form14->Button1->Visible = false;
+			Form14->Button5->Left = 0;
+			Form14->Button2->Left = 106;
+			Form14->Button3->Left = 211;
+			Form14->Caption = "Медикаменты";
+			Form14->Show();
+		}
+		else if (selectedNode->Text == "Справочник болезней")
+		{
+			Form15->Button1->Visible = false;
+			Form15->Button5->Left = 0;
+			Form15->Button2->Left = 106;
+			Form15->Button3->Left = 211;
+			Form15->Caption = "Шифры МКБ";
+			Form15->Show();
+		}
+		else if (selectedNode->Text == "Группы медикаментов")
+		{
+			Form18->Show();
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
+
+
+
+
+
+

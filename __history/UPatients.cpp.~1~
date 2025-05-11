@@ -1,0 +1,180 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit1.h"
+#include "Unit4.h"
+#include "Unit5.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFPatients *FPatients;
+//---------------------------------------------------------------------------
+__fastcall TFPatients::TFPatients(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+
+//-----------------------------Filtred---------------------------------------
+void __fastcall TFPatients::Edit1Change(TObject *Sender)
+{
+	ApplyFilter();
+}
+
+void __fastcall TFPatients::Edit2Change(TObject *Sender)
+{
+	ApplyFilter();
+}
+
+void __fastcall TFPatients::Edit3Change(TObject *Sender)
+{
+	ApplyFilter();
+}
+
+void __fastcall TFPatients::DateTimePicker1Change(TObject *Sender)
+{
+	ApplyFilter();
+}
+
+void __fastcall TFPatients::Edit4Change(TObject *Sender)
+{
+	ApplyFilter();
+}
+
+void __fastcall TFPatients::CheckBox1Click(TObject *Sender)
+{
+    ApplyFilter();
+}
+
+void __fastcall TFPatients::ApplyFilter()
+{
+// Базовый SQL-запрос
+    AnsiString baseQuery =
+        "SELECT "
+        "name as Имя, "
+        "surname as Фамилия, "
+        "patronymic as Отчество, "
+        "DOB as Дата_рождения, "
+        "sex as Пол, "
+        "number, "
+        "Specialties, "
+        "Regions, "
+        "Countries, "
+        "Idate, "
+        "citizenship, "
+        "INN, "
+        "RNN, "
+        "SIK, "
+        "DocID, "
+        "klients.KliID, "
+        "Klients.GBlood, "
+        "Klients.Rh_factor, "
+        "Klients.phone, "
+        "Klients.employee, "
+        "Klients.Sstatus, "
+        "Klients.Bcategory, "
+        "Klients.info "
+        "FROM Document "
+        "INNER JOIN Klients on Document.DocID = Klients.KliID "
+        "WHERE 1=1 ";
+
+    // Открываем запрос для получения данных
+    DataModule2->FDQuery2->SQL->Clear();
+    DataModule2->FDQuery2->SQL->Add(baseQuery);
+
+    // Флаг для отслеживания наличия фильтров
+    bool hasFilter = false;
+
+    // Фильтр для имени
+    if (Edit1->Text.Length() > 0) {
+        DataModule2->FDQuery2->SQL->Add(" AND name LIKE :nameFilter");
+        DataModule2->FDQuery2->ParamByName("nameFilter")->AsString = Edit1->Text + "%";
+        hasFilter = true;
+    }
+
+    // Фильтр для фамилии
+    if (Edit2->Text.Length() > 0) {
+        DataModule2->FDQuery2->SQL->Add(" AND surname LIKE :surnameFilter");
+        DataModule2->FDQuery2->ParamByName("surnameFilter")->AsString = Edit2->Text + "%";
+        hasFilter = true;
+    }
+
+    // Фильтр для отчества
+    if (Edit3->Text.Length() > 0) {
+        DataModule2->FDQuery2->SQL->Add(" AND patronymic LIKE :patronymicFilter");
+        DataModule2->FDQuery2->ParamByName("patronymicFilter")->AsString = Edit3->Text + "%";
+        hasFilter = true;
+    }
+
+    // Фильтр для ИНН
+    if (Edit4->Text.Length() > 0) {
+        DataModule2->FDQuery2->SQL->Add(" AND INN LIKE :INNFilter");
+        DataModule2->FDQuery2->ParamByName("INNFilter")->AsString = Edit4->Text + "%";
+        hasFilter = true;
+    }
+
+    // Фильтр для даты
+    if (CheckBox1->Checked) { // Проверяем, выбрана ли дата
+        DataModule2->FDQuery2->SQL->Add(" AND DOB = :DOBFilter");
+        DataModule2->FDQuery2->ParamByName("DOBFilter")->AsDateTime = DateTimePicker1->Date;
+        hasFilter = true;
+    }
+
+    // Если нет фильтров, просто выбираем все записи
+    if (!hasFilter) {
+        // Здесь можно оставить базовый запрос, так как он уже включает все записи
+    }
+
+    // Применяем фильтр
+	DataModule2->FDQuery2->Open();
+    DataModule2->DataSource3->DataSet = DataModule2->FDQuery2;
+	DBGrid1->DataSource = DataModule2->DataSource3;
+
+    StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery2->RecordCount);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFPatients::Button1Click(TObject *Sender)
+{
+    DataModule2->FDQuery2->Open();
+	int patiID = DataModule2->FDQuery2->FieldByName("DocID")->AsInteger;
+	Form4->SetPatiID(patiID);
+	Form4->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFPatients::Button2Click(TObject *Sender)
+{
+	DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery2->Append();
+    Form4->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFPatients::DBGrid1DblClick(TObject *Sender)
+{
+	int SelectedPatientID = DataModule2->FDQuery2->FieldByName("DocID")->AsInteger;
+
+	Form5->SetPatientID(SelectedPatientID);
+
+    Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFPatients::FormShow(TObject *Sender)
+{
+	DataModule2->FDQuery2->Open();
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery2->RecordCount);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFPatients::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery2->Delete();
+}
+//---------------------------------------------------------------------------
+

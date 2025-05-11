@@ -1,0 +1,152 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UMain.h"
+#include "UPatients.h"
+#include "UCoupons.h"
+#include "UServicesDirectory.h"
+#include "UCountries.h"
+#include "URegions.h"
+#include "UPositions.h"
+#include "UMedicines.h"
+#include "UCiphersMKB.h"
+#include "UMedicinesGroups.h"
+#include "Prompt_20.h"
+
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma resource "*.dfm"
+TFMain *FMain;
+//---------------------------------------------------------------------------
+__fastcall TFMain::TFMain(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+void TFMain::SetRole(const String &userRole)
+{
+	this->role = userRole;
+	role = userRole;
+
+	InitializeForm();
+}
+
+void __fastcall TFMain::InitializeForm()
+{
+    TreeView1->Images = ImageList1;
+
+    // Очистить старые элементы
+    TreeView1->Items->Clear();
+    // Добавляем узлы в зависимости от роли
+	if (role == "admin") {
+        // Для администраторов все доступно
+        TTreeNode *mainNode2 = TreeView1->Items->Add(NULL, "НСИ");
+        TTreeNode *subNode3 = TreeView1->Items->AddChild(mainNode2, "Страны");
+        TTreeNode *subNode4 = TreeView1->Items->AddChild(mainNode2, "Регионы");
+        TTreeNode *subNode5 = TreeView1->Items->AddChild(mainNode2, "Группы медикаментов");
+        TTreeNode *subNode6 = TreeView1->Items->AddChild(mainNode2, "Специальности");
+        TTreeNode *subNode7 = TreeView1->Items->AddChild(mainNode2, "Справочник услуг");
+		TTreeNode *subNode8 = TreeView1->Items->AddChild(mainNode2, "Справочник медикаментов");
+		TTreeNode *subNode9 = TreeView1->Items->AddChild(mainNode2, "Справочник болезней");
+
+        TTreeNode *mainNode1 = TreeView1->Items->Add(NULL, "Регистратура");
+        mainNode1->ImageIndex = 1;
+        mainNode1->SelectedIndex = 1;
+
+        TTreeNode *subNode1 = TreeView1->Items->AddChild(mainNode1, "Картотека пациентов");
+        subNode1->ImageIndex = 3;
+        subNode1->SelectedIndex = 3;
+
+        TTreeNode *subNode2 = TreeView1->Items->AddChild(mainNode1, "Журнал регистрации пациентов");
+    } else {
+        // Для обычных пользователей скрываем узел "НСИ"
+        TTreeNode *mainNode1 = TreeView1->Items->Add(NULL, "Регистратура");
+        mainNode1->ImageIndex = 1;
+        mainNode1->SelectedIndex = 1;
+
+        TTreeNode *subNode1 = TreeView1->Items->AddChild(mainNode1, "Картотека пациентов");
+        subNode1->ImageIndex = 3;
+        subNode1->SelectedIndex = 3;
+
+        TTreeNode *subNode2 = TreeView1->Items->AddChild(mainNode1, "Журнал регистрации пациентов");
+    }
+}
+
+
+
+void __fastcall TFMain::TreeView1DblClick(TObject *Sender)
+{
+    TTreeNode *selectedNode = TreeView1->Selected;
+
+    if (selectedNode != NULL && selectedNode->Parent != NULL) // Проверяем, что выбран подузел
+	{
+		if (selectedNode->Text == "Картотека пациентов")
+		{
+			FPatients->Show(); // Открываем первую форму
+        }
+        else if (selectedNode->Text == "Журнал регистрации пациентов")
+        {
+            FCoupons->Show(); // Открываем вторую форму
+		}
+		else if (selectedNode->Text == "Справочник услуг")
+		{
+			FServicesDirectory->Button1->Visible = false;
+			FServicesDirectory->Button5->Left = 0;
+			FServicesDirectory->Button2->Left = 106;
+			FServicesDirectory->Button3->Left = 211;
+			FServicesDirectory->Caption = "Справочник услуг";
+			FServicesDirectory->Show();
+		}
+		else if (selectedNode->Text == "Страны")
+		{
+			FCountry->Show();
+		}
+		else if (selectedNode->Text == "Регионы")
+		{
+			FRegions->Show();
+		}
+		else if (selectedNode->Text == "Специальности")
+		{
+			FPositions->Show();
+		}
+		else if (selectedNode->Text == "Справочник медикаментов")
+		{
+			FMedicines->Button1->Visible = false;
+			FMedicines->Button5->Left = 0;
+			FMedicines->Button2->Left = 106;
+			FMedicines->Button3->Left = 211;
+			FMedicines->Caption = "Медикаменты";
+			FMedicines->Show();
+		}
+		else if (selectedNode->Text == "Справочник болезней")
+		{
+			FMedicines->Button1->Visible = false;
+			FMedicines->Button5->Left = 0;
+			FMedicines->Button2->Left = 106;
+			FMedicines->Button3->Left = 211;
+			FMedicines->Caption = "Шифры МКБ";
+			FMedicines->Show();
+		}
+		else if (selectedNode->Text == "Группы медикаментов")
+		{
+			FMedicinesGroups->Show();
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
+
+
+
+
+
+
+void __fastcall TFMain::FormClose(TObject *Sender, TCloseAction &Action)
+{
+    Form20->Close();
+}
+//---------------------------------------------------------------------------
+

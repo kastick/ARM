@@ -1,0 +1,30 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit16.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm16 *Form16;
+//---------------------------------------------------------------------------
+__fastcall TForm16::TForm16(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm16::Button1Click(TObject *Sender)
+{
+    if (!DataModule2->FDTransaction1->Active)
+    {
+		DataModule2->FDTransaction1->StartTransaction();
+    }
+
+	DataModule2->FDQuery12->Edit();
+	DataModule2->FDQuery12->Post();
+
+	DataModule2->FDTransaction1->Commit();
+}
+//---------------------------------------------------------------------------

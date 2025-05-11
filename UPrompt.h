@@ -1,0 +1,36 @@
+//---------------------------------------------------------------------------
+
+#ifndef UPromptH
+#define UPromptH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.DBCtrls.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Mask.hpp>
+//---------------------------------------------------------------------------
+class TFPrompt : public TForm
+{
+__published:	// IDE-managed Components
+	TLabel *Label1;
+	TLabel *Label2;
+	TButton *Button1;
+	TEdit *Edit1;
+	TEdit *Edit2;
+	void __fastcall Button1Click(TObject *Sender);
+	void __fastcall Edit1KeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall Edit2KeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall FormShow(TObject *Sender);
+private:	// User declarations
+    String role;
+public:		// User declarations
+	bool __fastcall CheckCredentials(const String& login, const String& password, String &role);
+    String GetRole() { return role; }
+	__fastcall TFPrompt(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TFPrompt *FPrompt;
+//---------------------------------------------------------------------------
+#endif

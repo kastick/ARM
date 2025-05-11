@@ -1,0 +1,133 @@
+//---------------------------------------------------------------------------
+
+#ifndef Unit5H
+#define Unit5H
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.DBCtrls.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Mask.hpp>
+
+#include "DataModule.h"
+#include <Vcl.ComCtrls.hpp>
+#include <Vcl.Imaging.pngimage.hpp>
+#include <Vcl.ToolWin.hpp>
+#include <Data.DB.hpp>
+#include <Vcl.DBGrids.hpp>
+#include <Vcl.Grids.hpp>
+
+//---------------------------------------------------------------------------
+class TForm5 : public TForm
+{
+__published:	// IDE-managed Components
+	TDBEdit *DBEdit1;
+	TLabel *Label1;
+	TPanel *Panel1;
+	TPanel *Panel2;
+	TLabel *Label2;
+	TLabel *Label3;
+	TLabel *Label4;
+	TDBEdit *DBEdit2;
+	TDBEdit *DBEdit3;
+	TDBEdit *DBEdit4;
+	TPanel *Panel3;
+	TPageControl *PageControl1;
+	TTabSheet *TabSheet1;
+	TTabSheet *TabSheet2;
+	TLabel *Label5;
+	TLabel *Label6;
+	TLabel *Label7;
+	TPanel *Panel4;
+	TDBCheckBox *DBCheckBox1;
+	TDBCheckBox *DBCheckBox2;
+	TImage *Image1;
+	TDBEdit *DBEdit5;
+	TLabel *Label8;
+	TLabel *Label9;
+	TImage *Image2;
+	TToolBar *ToolBar2;
+	TDBGrid *DBGrid1;
+	TButton *Button2;
+	TButton *Button3;
+	TDBEdit *DBEdit6;
+	TLabel *Label10;
+	TToolBar *ToolBar3;
+	TButton *Button5;
+	TButton *Button6;
+	TToolButton *ToolButton1;
+	TButton *Button7;
+	TComboBox *ComboBox1;
+	TMemo *Memo1;
+	TDBEdit *DBEdit7;
+	TLabel *Label11;
+	TLabel *Label12;
+	TToolBar *ToolBar1;
+	TButton *Button1;
+	TToolButton *ToolButton2;
+	TTabSheet *TabSheet3;
+	TTabSheet *TabSheet4;
+	TTabSheet *TabSheet5;
+	TToolBar *ToolBar4;
+	TButton *Button4;
+	TButton *Button8;
+	TDBGrid *DBGrid2;
+	TDBMemo *DBMemo1;
+	TDBEdit *DBEdit8;
+	TLabel *Label13;
+	TToolBar *ToolBar5;
+	TButton *Button9;
+	TButton *Button10;
+	TDBGrid *DBGrid3;
+	TDBMemo *DBMemo2;
+	TButton *Button11;
+	void __fastcall Button6Click(TObject *Sender);
+	void __fastcall Button5Click(TObject *Sender);
+	void __fastcall Button7Click(TObject *Sender);
+	void __fastcall Button3Click(TObject *Sender);
+	void __fastcall ComboBox1Change(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
+	void __fastcall Button2Click(TObject *Sender);
+	void __fastcall Button1Click(TObject *Sender);
+	void __fastcall DBGrid2KeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall DBGrid1KeyUp(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall Button4Click(TObject *Sender);
+	void __fastcall Button8Click(TObject *Sender);
+	void __fastcall Button9Click(TObject *Sender);
+	void __fastcall Button10Click(TObject *Sender);
+	void __fastcall Button11Click(TObject *Sender);
+private:	// User declarations
+	int recID;
+	int SelectedPatientID;
+	int SelectedDoctorID;
+	int selectedDocID;
+    int SelectedAilID;
+    int newIRecID;
+	int SelectedServiceID;
+    int SelectedMedID;
+    TDateTime selectedDate;
+public:		// User declarations
+	void __fastcall SetRecID(int recID);
+    void __fastcall SetDoctorID(int SelectedDoctorID, TDateTime selectedDate);
+	void __fastcall SetPatientID(int SelectedPatientID);
+	void __fastcall SetServiceID(int SelectedServiceID);
+	void __fastcall SetMedID(int SelectedMedID);
+    void __fastcall SetAilID(int SelectedAilID);
+	void __fastcall DocID(int selectedDocID);
+	void __fastcall PopulateTimeComboBox();
+    void __fastcall CalculateTotal();
+	void __fastcall UpdateQuery();
+	void __fastcall UpdateQueryMed();
+    void __fastcall UpdateQueryAil();
+	void __fastcall TotalCost();
+	void __fastcall TotalCostMed();
+	void __fastcall ViewHide();
+	void __fastcall AddHide();
+	__fastcall TForm5(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm5 *Form5;
+//---------------------------------------------------------------------------
+#endif

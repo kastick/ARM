@@ -1,0 +1,98 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UServicesDirectory.h"
+#include "UCardEntry.h"
+#include "UServicesFF.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFServicesDirectory *FServicesDirectory;
+//---------------------------------------------------------------------------
+__fastcall TFServicesDirectory::TFServicesDirectory(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TFServicesDirectory::Button1Click(TObject *Sender)
+{
+	int SelectedServiceID = DataModule2->FDQuery7->FieldByName("SrvcsID")->AsInteger;
+
+	FCardEntry->SetServiceID(SelectedServiceID);
+
+    Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFServicesDirectory::Button2Click(TObject *Sender)
+{
+	DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery7->Append();
+	FServicesFF->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFServicesDirectory::Button5Click(TObject *Sender)
+{
+    FServicesFF->ShowModal();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFServicesDirectory::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery7->Delete();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFServicesDirectory::Edit1Change(TObject *Sender)
+{
+    String filterText = Edit1->Text;
+
+	DataModule2->FDQuery7->Close();
+
+	if (!filterText.IsEmpty() && filterText != "Поиск...")
+	{
+		DataModule2->FDQuery7->ParamByName("ServiceFilter")->AsString = "%" + filterText + "%";
+    }
+    else
+	{
+		DataModule2->FDQuery7->ParamByName("ServiceFilter")->AsString = "%";
+    }
+
+	DataModule2->FDQuery7->Open();
+
+    // Обновляем StatusBar с количеством записей
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery7->RecordCount);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFServicesDirectory::Edit1Exit(TObject *Sender)
+{
+    // Если поле пустое, устанавливаем текст "Поиск..."
+	if (Edit1->Text.IsEmpty())
+    {
+		Edit1->Text = "Поиск...";
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFServicesDirectory::Edit1Enter(TObject *Sender)
+{
+    // Если текст "Поиск...", очищаем поле
+	if (Edit1->Text == "Поиск...")
+    {
+		Edit1->Text = "";
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFServicesDirectory::FormShow(TObject *Sender)
+{
+	DataModule2->FDQuery7->Open();
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery7->RecordCount);
+}
+//---------------------------------------------------------------------------
+

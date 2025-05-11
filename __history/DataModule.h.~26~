@@ -1,0 +1,270 @@
+//---------------------------------------------------------------------------
+
+#ifndef DataModuleH
+#define DataModuleH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Data.DB.hpp>
+#include <Data.Win.ADODB.hpp>
+#include <FireDAC.Comp.Client.hpp>
+#include <FireDAC.Comp.DataSet.hpp>
+#include <FireDAC.DApt.hpp>
+#include <FireDAC.DApt.Intf.hpp>
+#include <FireDAC.DatS.hpp>
+#include <FireDAC.Phys.hpp>
+#include <FireDAC.Phys.Intf.hpp>
+#include <FireDAC.Phys.SQLite.hpp>
+#include <FireDAC.Phys.SQLiteDef.hpp>
+#include <FireDAC.Phys.SQLiteWrapper.Stat.hpp>
+#include <FireDAC.Stan.Async.hpp>
+#include <FireDAC.Stan.Def.hpp>
+#include <FireDAC.Stan.Error.hpp>
+#include <FireDAC.Stan.ExprFuncs.hpp>
+#include <FireDAC.Stan.Intf.hpp>
+#include <FireDAC.Stan.Option.hpp>
+#include <FireDAC.Stan.Param.hpp>
+#include <FireDAC.Stan.Pool.hpp>
+#include <FireDAC.UI.Intf.hpp>
+#include <FireDAC.VCLUI.Wait.hpp>
+#include <FireDAC.Phys.MSAcc.hpp>
+#include <FireDAC.Phys.MSAccDef.hpp>
+#include "frCoreClasses.hpp"
+#include "frxClass.hpp"
+#include "frxDBSet.hpp"
+//---------------------------------------------------------------------------
+class TDataModule2 : public TDataModule
+{
+__published:	// IDE-managed Components
+	TDataSource *DataSource2;
+	TDataSource *DataSource1;
+	TDataSource *DataSource3;
+	TDataSource *DataSource4;
+	TDataSource *DataSource5;
+	TFDConnection *FDConnection1;
+	TFDQuery *FDQuery1;
+	TFDTable *FDTable1;
+	TFDTable *FDTable2;
+	TFDTable *FDTable3;
+	TFDTable *FDTable4;
+	TFDTable *FDTable5;
+	TFDTable *FDTable6;
+	TFDQuery *FDQuery2;
+	TFDQuery *FDQuery3;
+	TFDAutoIncField *FDTable1KliID;
+	TIntegerField *FDTable1Ndocument;
+	TWideStringField *FDTable1Gblood;
+	TWideStringField *FDTable1phone;
+	TWideStringField *FDTable1Rh_factor;
+	TIntegerField *FDTable1Sstatus;
+	TIntegerField *FDTable1Bcategory;
+	TBooleanField *FDTable1employee;
+	TWideMemoField *FDTable1info;
+	TFDAutoIncField *FDTable2DocID;
+	TWideStringField *FDTable2name;
+	TWideStringField *FDTable2surname;
+	TWideStringField *FDTable2patronymic;
+	TWideStringField *FDTable2number;
+	TWideStringField *FDTable2sex;
+	TSQLTimeStampField *FDTable2Idate;
+	TSQLTimeStampField *FDTable2DOB;
+	TWideStringField *FDTable2citizenship;
+	TWideStringField *FDTable2INN;
+	TWideStringField *FDTable2RNN;
+	TWideStringField *FDTable2SIK;
+	TFDAutoIncField *FDTable3SocID;
+	TWideStringField *FDTable3Sstatus;
+	TFDAutoIncField *FDTable4BenID;
+	TWideStringField *FDTable4Bcategory;
+	TWideStringField *FDQuery2number;
+	TSQLTimeStampField *FDQuery2Idate;
+	TWideStringField *FDQuery2citizenship;
+	TWideStringField *FDQuery2INN;
+	TWideStringField *FDQuery2RNN;
+	TWideStringField *FDQuery2SIK;
+	TFDAutoIncField *FDQuery2DocID;
+	TIntegerField *FDQuery2KliID;
+	TWideStringField *FDQuery2GBlood;
+	TWideStringField *FDQuery2Rh_factor;
+	TWideStringField *FDQuery2phone;
+	TBooleanField *FDQuery2employee;
+	TIntegerField *FDQuery2Sstatus;
+	TIntegerField *FDQuery2Bcategory;
+	TWideMemoField *FDQuery2info;
+	TWideStringField *FDQuery3name;
+	TFDAutoIncField *FDQuery3DocID;
+	TStringField *FDQuery2status_1;
+	TStringField *FDQuery2category_1;
+	TFDQuery *FDQuery4;
+	TDataSource *DataSource6;
+	TFDAutoIncField *FDTable6IRecID;
+	TIntegerField *FDTable6employee;
+	TIntegerField *FDTable6patient;
+	TFDAutoIncField *FDTable5RecID;
+	TSQLTimeStampField *FDTable5Date;
+	TIntegerField *FDTable5Description;
+	TWideStringField *FDQuery1ФИО_Врача;
+	TWideStringField *FDQuery1patient_sex;
+	TFDAutoIncField *FDQuery1RecID;
+	TSQLTimeStampField *FDQuery1Date;
+	TIntegerField *FDQuery1Description;
+	TWideStringField *FDQuery1ФИО_Пациента;
+	TSQLTimeStampField *FDQuery1Дата_рождения;
+	TBooleanField *FDQuery1status;
+	TBooleanField *FDQuery1employee;
+	TFDTable *FDTable7;
+	TFDTable *FDTable8;
+	TFDAutoIncField *FDTable7SrvcsID;
+	TFDAutoIncField *FDTable8SrvcID;
+	TIntegerField *FDTable8Service;
+	TIntegerField *FDTable8Record;
+	TFDQuery *FDQuery5;
+	TDataSource *DataSource7;
+	TWideStringField *FDTable7Service;
+	TFDAutoIncField *FDQuery5SrvcID;
+	TWideStringField *FDQuery5Service;
+	TIntegerField *FDQuery5Record;
+	TCurrencyField *FDTable7Price;
+	TIntegerField *FDTable8Count;
+	TCurrencyField *FDQuery5Price;
+	TIntegerField *FDQuery5Count;
+	TCurrencyField *FDTable8Sum;
+	TCurrencyField *FDQuery5Sum;
+	TFDQuery *FDQuery6;
+	TWideStringField *FDTable5Time;
+	TBooleanField *FDTable5status;
+	TWideStringField *FDQuery1Время;
+	TFDQuery *FDQuery7;
+	TWideStringField *FDQuery7Услуги;
+	TDataSource *DataSource8;
+	TIntegerField *FDTable7Duration;
+	TBooleanField *FDTable7Availability;
+	TBooleanField *FDQuery7Доступность;
+	TCurrencyField *FDQuery7Ценаруб;
+	TIntegerField *FDQuery7Длительностьмин;
+	TFDAutoIncField *FDQuery7SrvcsID;
+	TBooleanField *FDQuery5Availability;
+	TIntegerField *FDQuery5Duration;
+	TIntegerField *FDQuery1DoctorID;
+	TFDTransaction *FDTransaction1;
+	TIntegerField *FDTable2Specialties;
+	TIntegerField *FDTable2Regions;
+	TIntegerField *FDTable2Countries;
+	TIntegerField *FDQuery2Specialties;
+	TIntegerField *FDQuery2Regions;
+	TIntegerField *FDQuery2Countries;
+	TFDTable *FDTable9;
+	TFDTable *FDTable10;
+	TFDTable *FDTable11;
+	TStringField *FDQuery2LCountries;
+	TStringField *FDQuery2LRegions;
+	TWideStringField *FDQuery3Specialties;
+	TFDQuery *FDQuery8;
+	TFDQuery *FDQuery9;
+	TFDQuery *FDQuery10;
+	TDataSource *DataSource9;
+	TFDAutoIncField *FDQuery8Номер;
+	TWideStringField *FDQuery8Страна;
+	TDataSource *DataSource10;
+	TFDAutoIncField *FDTable10RegID;
+	TWideStringField *FDTable10Regions;
+	TFDAutoIncField *FDQuery9Номер;
+	TWideStringField *FDQuery9Регион;
+	TDataSource *DataSource11;
+	TFDAutoIncField *FDTable11SpecID;
+	TWideStringField *FDTable11Specialties;
+	TFDAutoIncField *FDQuery10Номер;
+	TWideStringField *FDQuery10Специальность;
+	TWideStringField *FDQuery2Имя;
+	TWideStringField *FDQuery2Фамилия;
+	TWideStringField *FDQuery2Отчество;
+	TSQLTimeStampField *FDQuery2Дата_рождения;
+	TWideStringField *FDQuery2Пол;
+	TfrxReport *frxReport1;
+	TfrxDBDataset *frxDBDataset1;
+	TFDQuery *FDQuery11;
+	TFDTable *FDTable12;
+	TFDTable *FDTable13;
+	TFDAutoIncField *FDTable12MedsID;
+	TWideStringField *FDTable12Medicines;
+	TSQLTimeStampField *FDTable12DExpiration;
+	TCurrencyField *FDTable12Price;
+	TBooleanField *FDTable12Availability;
+	TFDAutoIncField *FDTable13MedID;
+	TIntegerField *FDTable13Medicine;
+	TIntegerField *FDTable13Record;
+	TIntegerField *FDTable13Count;
+	TCurrencyField *FDTable13Sum;
+	TFDQuery *FDQuery12;
+	TFDAutoIncField *FDQuery12MedsID;
+	TWideStringField *FDQuery12Медикаменты;
+	TSQLTimeStampField *FDQuery12Срок_годности;
+	TCurrencyField *FDQuery12Цена;
+	TWideStringField *FDQuery12Группа;
+	TBooleanField *FDQuery12Состояние;
+	TDataSource *DataSource12;
+	TFDQuery *FDQuery13;
+	TDataSource *DataSource13;
+	TFDAutoIncField *FDQuery13MedID;
+	TWideStringField *FDQuery13Медикаменты;
+	TSQLTimeStampField *FDQuery13Срок_годности;
+	TCurrencyField *FDQuery13Цена;
+	TBooleanField *FDQuery13Наличие;
+	TIntegerField *FDQuery13Record;
+	TIntegerField *FDQuery13Count;
+	TCurrencyField *FDQuery13Sum;
+	TFDTable *FDTable14;
+	TFDTable *FDTable15;
+	TFDAutoIncField *FDTable14AilsID;
+	TWideStringField *FDTable14Ailments;
+	TWideStringField *FDTable14Сipher;
+	TFDAutoIncField *FDTable15AilID;
+	TIntegerField *FDTable15Ailment;
+	TIntegerField *FDTable15Record;
+	TFDQuery *FDQuery14;
+	TDataSource *DataSource14;
+	TFDQuery *FDQuery15;
+	TDataSource *DataSource15;
+	TFDAutoIncField *FDQuery14AilsID;
+	TWideStringField *FDQuery14Болезни;
+	TWideStringField *FDQuery14Шифр;
+	TFDAutoIncField *FDQuery15AilID;
+	TWideStringField *FDQuery15Заболевание;
+	TWideStringField *FDQuery15Шифр;
+	TIntegerField *FDQuery15Record;
+	TFDTable *FDTable16;
+	TFDAutoIncField *FDTable16GroupID;
+	TWideStringField *FDTable16Group;
+	TIntegerField *FDTable12Group;
+	TIntegerField *FDQuery12Group;
+	TStringField *FDQuery12LGroup;
+	TFDQuery *FDQuery16;
+	TFDAutoIncField *FDQuery16Номер;
+	TWideStringField *FDQuery16Группа;
+	TDataSource *DataSource16;
+	TFDTable *FDTable17;
+	TFDAutoIncField *FDTable17OrgID;
+	TWideStringField *FDTable17OrgName;
+	TWideStringField *FDTable17Address;
+	TWideStringField *FDTable17Phone;
+	TWideStringField *FDTable17INN;
+	TWideStringField *FDTable17KPP;
+	TWideStringField *FDTable17BIK;
+	TWideStringField *FDTable17AccountNum;
+	TWideStringField *FDTable2BIK;
+	TWideStringField *FDTable2AccountNum;
+	TWideStringField *FDQuery2BIK;
+	TWideStringField *FDQuery2AccountNum;
+	TWideMemoField *FDTable5Сonclusion;
+	TWideMemoField *FDQuery1Сonclusion;
+	TfrxDBDataset *frxDBDataset2;
+	TFDQuery *FDQuery17;
+	TfrxDBDataset *frxDBDataset3;
+	TfrxReport *frxReport2;
+private:	// User declarations
+public:		// User declarations
+	__fastcall TDataModule2(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TDataModule2 *DataModule2;
+//---------------------------------------------------------------------------
+#endif

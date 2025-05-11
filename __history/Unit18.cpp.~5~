@@ -1,0 +1,34 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit18.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TForm18 *Form18;
+//---------------------------------------------------------------------------
+__fastcall TForm18::TForm18(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm18::Button1Click(TObject *Sender)
+{
+     Form19->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm18::Button2Click(TObject *Sender)
+{
+    DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery16->Append();
+	Form19->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm18::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery16->Delete();
+}
+//---------------------------------------------------------------------------

@@ -1,0 +1,29 @@
+//---------------------------------------------------------------------------
+
+#ifndef Unit16H
+#define Unit16H
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.ComCtrls.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.ToolWin.hpp>
+//---------------------------------------------------------------------------
+class TForm16 : public TForm
+{
+__published:	// IDE-managed Components
+	TToolBar *ToolBar1;
+	TToolButton *ToolButton1;
+	TButton *Button1;
+	TButton *Button2;
+	TPanel *Panel1;
+private:	// User declarations
+public:		// User declarations
+	__fastcall TForm16(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm16 *Form16;
+//---------------------------------------------------------------------------
+#endif

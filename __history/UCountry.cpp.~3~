@@ -1,0 +1,80 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "UCountry.h"
+#include "UCountryFF.h"
+#include "DataModule.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFCountry *FCountry;
+//---------------------------------------------------------------------------
+__fastcall TFCountry::TFCountry(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCountry::Edit1Change(TObject *Sender)
+{
+    String filterText = Edit1->Text;
+
+	DataModule2->FDQuery8->Close();
+
+	if (!filterText.IsEmpty() && filterText != "Поиск...")
+	{
+		DataModule2->FDQuery8->ParamByName("CountriesFilter")->AsString = "%" + filterText + "%";
+    }
+	else
+	{
+		DataModule2->FDQuery8->ParamByName("CountriesFilter")->AsString = "%";
+    }
+
+	DataModule2->FDQuery8->Open();
+
+    // Обновляем StatusBar с количеством записей
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery8->RecordCount);
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCountry::Edit1Exit(TObject *Sender)
+{
+    // Если поле пустое, устанавливаем текст "Поиск..."
+	if (Edit1->Text.IsEmpty())
+    {
+		Edit1->Text = "Поиск...";
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCountry::Edit1Enter(TObject *Sender)
+{
+    // Если текст "Поиск...", очищаем поле
+	if (Edit1->Text == "Поиск...")
+    {
+		Edit1->Text = "";
+    }
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCountry::FormShow(TObject *Sender)
+{
+    DataModule2->FDQuery8->Open();
+	StatusBar1->Panels->Items[0]->Text = "Количество записей: " + IntToStr(DataModule2->FDQuery8->RecordCount);
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCountry::Button3Click(TObject *Sender)
+{
+    DataModule2->FDQuery8->Delete();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCountry::Button2Click(TObject *Sender)
+{
+    DataModule2->FDTransaction1->StartTransaction();
+	DataModule2->FDQuery8->Append();
+	Form9->ShowModal();
+}
+//---------------------------------------------------------------------------
+void __fastcall TFCountry::Button1Click(TObject *Sender)
+{
+    Form9->ShowModal();
+}
+//---------------------------------------------------------------------------

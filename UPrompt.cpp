@@ -1,0 +1,88 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "map"
+
+#include "UPrompt.h"
+#include "UHead.h"
+#include "UMain.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+TFPrompt *FPrompt;
+//---------------------------------------------------------------------------
+__fastcall TFPrompt::TFPrompt(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+std::map<String, std::pair<String, String>> users = {
+	{"admin", {"123", "admin"}},
+	{"user1", {"123", "user"}},
+	{"guest", {"123", "user"}}
+};
+
+String role = "user"; // Роль пользователя по умолчанию
+
+void __fastcall TFPrompt::Button1Click(TObject *Sender)
+{
+	String login = Edit1->Text;
+	String password = Edit2->Text;
+
+    // Проверка на правильность логина и пароля
+    if (CheckCredentials(login, password, role)) {
+        // Если пароль верный, закрываем форму ввода пароля
+        this->Hide();
+
+		// Создаем и показываем главное меню
+		FMain->SetRole(role);
+
+		FMain->Show();
+    } else {
+        ShowMessage("Invalid login or password!");
+	}
+}
+//---------------------------------------------------------------------------
+
+bool TFPrompt::CheckCredentials(const String& login, const String& password, String &role)
+{
+    // Пример: логины и пароли (можно заменить на вашу логику)
+	auto it = users.find(login);
+    if (it != users.end() && it->second.first == password) {
+        role = it->second.second; // Устанавливаем роль из мапы
+        return true;
+    }
+    return false;
+}
+void __fastcall TFPrompt::Edit1KeyDown(TObject *Sender, WORD &Key, TShiftState Shift)
+
+{
+   if (Key == VK_RETURN) { // Проверяем, была ли нажата клавиша Enter
+        // Устанавливаем фокус на следующий элемент
+		Edit2->SetFocus(); // Замените EditPassword на имя вашего следующего элемента
+        Key = 0; // Отменяем стандартное поведение клавиши Enter
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFPrompt::Edit2KeyDown(TObject *Sender, WORD &Key, TShiftState Shift)
+
+{
+    if (Key == VK_RETURN) { // Проверяем, была ли нажата клавиша Enter
+        // Устанавливаем фокус на следующий элемент
+		Button1->Click(); // Замените EditPassword на имя вашего следующего элемента
+        Key = 0; // Отменяем стандартное поведение клавиши Enter
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TFPrompt::FormShow(TObject *Sender)
+{
+	FHead->ShowModal();
+	Edit1->SetFocus();
+}
+//---------------------------------------------------------------------------
+
